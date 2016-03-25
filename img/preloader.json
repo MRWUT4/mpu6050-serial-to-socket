@@ -1,0 +1,44 @@
+﻿{
+	"timeline": 
+	{
+		"0": 
+		[
+			{
+				"type": "container",
+				"id": "preloaderContent",
+				"name": "content",
+				"frames": 
+				{
+					"0": 
+					[
+						{
+							"type": "sprite",
+							"id": "preloaderImage",
+							"name": "preloader",
+							"x": 330,
+							"y": 364
+						},
+						{
+							"type": "sprite",
+							"id": "background",
+							"name": "background"
+						}
+					]
+				}
+			}
+		]
+	},
+	"assets": 
+	{
+		"animations": 
+		[
+		],
+		"resources": 
+		[
+			{
+				"img": "img/preloader-atlas-0.png",
+				"json": "img/preloader-atlas-0.json"
+			}
+		]
+	}
+}

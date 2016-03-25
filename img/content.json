@@ -1,0 +1,112 @@
+﻿{
+	"timeline": 
+	{
+		"game": 
+		[
+			{
+				"type": "container",
+				"id": "game",
+				"name": "game",
+				"frames": 
+				{
+					"0": 
+					[
+						{
+							"type": "sprite",
+							"id": "tree",
+							"name": "tree",
+							"x": 4,
+							"y": 59
+						},
+						{
+							"type": "movieclip",
+							"id": "player",
+							"name": "player",
+							"x": 467,
+							"y": 400,
+							"pivot": 
+							{
+								"x": 100,
+								"y": 53
+							}
+						},
+						{
+							"type": "container",
+							"id": "container",
+							"name": "container",
+							"frames": 
+							{
+								
+							}
+						},
+						{
+							"type": "container",
+							"id": "gameContainer",
+							"name": "gameContainer",
+							"frames": 
+							{
+								"0": 
+								[
+									{
+										"type": "sprite",
+										"id": "background",
+										"name": "background"
+									}
+								]
+							}
+						}
+					]
+				}
+			}
+		]
+	},
+	"assets": 
+	{
+		"animations": 
+		[
+			{
+				"name": "player",
+				"labels": 
+				{
+					"up": 
+					{
+						"begin": 0,
+						"end": 10
+					},
+					"up-left": 
+					{
+						"begin": 11,
+						"end": 21
+					},
+					"up-right": 
+					{
+						"begin": 22,
+						"end": 32
+					},
+					"straight": 
+					{
+						"begin": 33,
+						"end": 43
+					},
+					"straight-left": 
+					{
+						"begin": 44,
+						"end": 54
+					},
+					"straight-right": 
+					{
+						"begin": 55,
+						"end": 65
+					}
+				}
+			}
+		],
+		"resources": 
+		[
+			{
+				"img": "img/content-atlas-0.png",
+				"json": "img/content-atlas-0.json"
+			}
+		]
+	}
+}
