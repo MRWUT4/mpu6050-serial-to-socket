@@ -62,11 +62,11 @@
 	{
 		Draw.loop = 
 		[
-			// Draw.background,
+			Draw.background,
 			Draw.road,
 			Draw.rumble,
-			// Draw.lanes,
-			// Draw.fog
+			Draw.lanes,
+			Draw.fog
 		];
 
 		Road.SPRITE_SCALE = 1; 
@@ -100,8 +100,11 @@
 
 		for(var i = 0; i < 800; ++i)
 		{
-		    this.roadRenderer.addSprite( i * 10, this.getClone( this.tree ), null, -.8 );	
-		    this.roadRenderer.addSprite( i * 10, this.getClone( this.tree ), null,  .8 );
+			if( i % 2 == 0 )
+			{
+			    this.roadRenderer.addSprite( i * 10, this.getClone( this.tree ), null, Calculator.getRandomFloatBetweenAandB( -.8, -1.6 ) );	
+			    this.roadRenderer.addSprite( i * 10, this.getClone( this.tree ), null, Calculator.getRandomFloatBetweenAandB(  .8,  1.6 ) );
+			}
 		}
 
 		this.roadRenderer.update();

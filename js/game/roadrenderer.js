@@ -78,6 +78,7 @@
 	prototype.update = function()
 	{
 		this.updateDrawValues();
+		this.updateInputValues();
 		this.updatePlayerValues();
 		this.updateSpriteCollision();
 		this.drawRoad();
@@ -131,6 +132,9 @@
 		this.playerLimit = this.setup.playerLimit !== undefined ? this.setup.playerLimit : 2;
 		this.centrifugal = this.setup.centrifugal !== undefined ? this.setup.centrifugal : 0.3;
 
+		this.direction = 1;
+		this.throttle = 0;
+
 		this.vectorVO = { graphics:0, width:0, lanes:0, x1:0, y1:0, w1:0, x2:0, y2:0, w2:0, fog:0, color:0 };
 	};
 
@@ -154,29 +158,36 @@
 		this.playerX = Util.limit( this.playerX, -this.playerLimit, this.playerLimit );
 	};
 
-	prototype.updatePlayerValues = function()
+	prototype.updateInputValues = function()
 	{
-		var dx = this.step * 2 * this.speedPercent;
-
 		if( this.input.left )
-			this.playerX = this.playerX - dx;
+			this.direction =  1;
 		else 
 		if( this.input.right )
-			this.playerX = this.playerX + dx;
+			this.direction = -1;
+		else
+			this.direction = 0;
 
-		this.playerX = this.playerX - (dx * this.speedPercent * this.playerSegment.curve * this.centrifugal);
 
 		if( this.input.up )
-			this.speed = Util.accelerate( this.speed, this.accel, this.step );
+			this.throttle = this.accel;
 		else 
 		if( this.input.down )
-			this.speed = Util.accelerate( this.speed, this.breaking, this.step );
+			this.throttle = this.breaking;
 		else
-			this.speed = Util.accelerate( this.speed, this.decel, this.step );
+			this.throttle = this.decel;
+	};
+
+	prototype.updatePlayerValues = function()
+	{
+		this.dx = this.step * 2 * this.speedPercent;
+		this.playerX = this.playerX - this.dx * this.direction;
+		this.speed = Util.accelerate( this.speed, this.throttle, this.step );
 
 		if( ( this.playerX < -1 || this.playerX > 1 ) && ( this.speed > this.offRoadLimit) )
 			this.speed = Util.accelerate( this.speed, this.offRoadDecel, this.step );
 
+		this.playerX = this.playerX - (this.dx * this.speedPercent * this.playerSegment.curve * this.centrifugal);
       	this.speed = Util.limit( this.speed, 0, this.maxSpeed );
 	};
 

@@ -22,6 +22,7 @@
 			new GameplayModule( this.shared ),
 
 			new SocketGyroControlModule( this.shared ),
+			new RoadRendererGyroControlModule( this.shared )
 		];	
 	};
 

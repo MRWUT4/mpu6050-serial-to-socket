@@ -61,6 +61,9 @@
 	prototype.initVariables = function()
 	{
 		this.gyro = { x:0, y:0, z:0 };
+		
+		this.messenger = this.setup.messenger;
+		this.event = new Event( Event.GYRO, this.gyro );
 	};
 
 	prototype.initSocket = function()
@@ -81,6 +84,8 @@
 		this.gyro.x = this.limitValue( split[ 0 ], this.range.x, this.multiplier.x );
 		this.gyro.y = this.limitValue( split[ 1 ], this.range.y, this.multiplier.y );
 		this.gyro.z = this.limitValue( split[ 2 ], this.range.z, this.multiplier.z );
+
+		this.messenger.send( this.event );
 	};
 
 	prototype.limitValue = function(value, range, multiplier)
