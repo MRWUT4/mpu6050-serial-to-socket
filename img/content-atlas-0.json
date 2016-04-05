@@ -1,5 +1,13 @@
 ﻿{"frames": {
 
+"gem0000":
+{
+	"frame": {"x":311,"y":278,"w":50,"h":69},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":50,"h":69},
+	"sourceSize": {"w":50,"h":69}
+},
 "player0000":
 {
 	"frame": {"x":311,"y":0,"w":298,"h":276},

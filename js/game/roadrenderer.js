@@ -1,22 +1,21 @@
-/**
- * RoadRenderer
- *
- * @class RoadRenderer
- * @constructor
- *
- */
-
 (function(window){
 
 	window.RoadRenderer = RoadRenderer;
 
-	var prototype = RoadRenderer.prototype = Object.create( Object.prototype );
+	var prototype = RoadRenderer.prototype = Object.create( EventDispatcher.prototype );
 	prototype.constructor = RoadRenderer;
 
 
+	/**
+	 * RoadRenderer
+	 *
+	 * @class RoadRenderer
+	 * @constructor
+	 *
+	 */
 	function RoadRenderer(setup)
 	{
-		Object.call( this );
+		EventDispatcher.call( this );
 		this.setup = setup;
 		this.init();
 	}
@@ -43,7 +42,7 @@
 		this.trackLength = this.segments.length * this.segmentLength;
 	};
 
-	prototype.addSprite = function(n, sprite, parent, offset)
+	prototype.addSprite = function(n, sprite, parent, offset, scale, solid)
 	{
 		parent = parent !== null ? parent : sprite.parent;
 
@@ -54,7 +53,9 @@
 				id: sprite.id,
 				source: sprite, 
 				parent: parent, 
-				offset: offset 
+				offset: offset,
+				solid: solid,
+				scale: scale,
 			});
 		}
 	};
@@ -75,15 +76,20 @@
 			this.addSegment( Util.easeInOut(curve, 0, n/leave), Util.easeInOut(startY, endY, (enter+hold+n)/total) );
 	}
 
+
+	/** Update loop. */
 	prototype.update = function()
 	{
-		this.updateDrawValues();
-		this.updateInputValues();
-		this.updatePlayerValues();
-		this.updateSpriteCollision();
-		this.drawRoad();
-		this.drawSprites();
-		this.drawPlayer();
+		if( this.active )
+		{
+			this.updateDrawValues();
+			this.updateInputValues();
+			this.updatePlayerValues();
+			this.updateSpriteCollision();
+			this.drawRoad();
+			this.drawSprites();
+			this.drawPlayer();
+		}
 	};
 
 
@@ -102,6 +108,7 @@
 	/** Variables. */
 	prototype.initVariables = function()
 	{
+		this.active = true;
 		this.width = this.setup.width;
 		this.height = this.setup.height;
 		this.step = 1 / GameSetup.getInstance().fps;
@@ -117,9 +124,9 @@
 		this.fieldOfView = this.setup.fieldOfView !== undefined ? this.setup.fieldOfView : 100;
 		this.cameraHeight = this.setup.cameraHeight !== undefined ? this.setup.cameraHeight : 1000;
 		this.cameraDepth = this.setup.cameraDepth !== undefined ? this.setup.cameraDepth : 1 / Math.tan( ( this.fieldOfView / 2 ) * Math.PI/180 );
-		this.drawDistance = this.setup.drawDistance !== undefined ? this.setup.drawDistance : 300;
+		this.drawDistance = this.setup.drawDistance !== undefined ? this.setup.drawDistance : 150;
 		this.playerX = this.setup.playerX !== undefined ? this.setup.playerX : 0;
-		this.playerZ = this.cameraHeight * this.cameraDepth;
+		this.playerZ = this.setup.playerZ !== undefined ? this.setup.playerZ :this.cameraHeight * this.cameraDepth;
 		this.fogDensity = this.setup.fogDensity !== undefined ? this.setup.fogDensity : 5;
 		this.position = this.setup.position !== undefined ? this.setup.position : 0;
 		this.speed = this.setup.speed !== undefined ? this.setup.speed : 0;
@@ -131,9 +138,12 @@
 		this.offRoadLimit = this.setup.offRoadLimit !== undefined ? this.setup.offRoadLimit : this.maxSpeed / 4;
 		this.playerLimit = this.setup.playerLimit !== undefined ? this.setup.playerLimit : 2;
 		this.centrifugal = this.setup.centrifugal !== undefined ? this.setup.centrifugal : 0.3;
+		this.hitSize = this.setup.hitSize !== undefined ? this.setup.hitSize : 0.3;
 
 		this.direction = 1;
 		this.throttle = 0;
+		Event.HIT = "hit";
+		this.eventHit = new Event( Event.HIT );
 
 		this.vectorVO = { graphics:0, width:0, lanes:0, x1:0, y1:0, w1:0, x2:0, y2:0, w2:0, fog:0, color:0 };
 	};
@@ -196,18 +206,28 @@
 	prototype.updateSpriteCollision = function()
 	{
 		var player = this.player.source;
-		var playerW = player.width;
+		var playerWidth = player.width;
 
 		for(var i = 0 ; i < this.playerSegment.sprites.length ; i++) 
 		{
-			var sprite  = this.playerSegment.sprites[ i ].source;
+			var object = this.playerSegment.sprites[ i ]
+			var sprite = object.source;
 
-			if( player.x + player.width > sprite.x &&
-				player.x < sprite.x + sprite.width )
+			if( sprite )
 			{
-				this.position = Util.increase( this.playerSegment.p1.world.z, -this.playerZ, this.trackLength );
-				// collision 
-				break;
+				var isColliding = player.x + playerWidth > sprite.x && player.x < sprite.x + sprite.width;
+				var isSolid = object.solid === true;
+
+				if( isColliding )
+				{
+					if( isSolid )
+						this.position = Util.increase( this.playerSegment.p1.world.z, -this.playerZ, this.trackLength );
+					
+					this.eventHit.object = object;
+					this.send( this.eventHit );
+					
+					break;
+				}
 			}
 		}
 	};
@@ -300,16 +320,19 @@
 			for(var i = 0; i < sprites.length; ++i)
 			{
 				var object = sprites[ i ];
-				var sprite = object.source;
+				var source = object.source;
 
-				sprite.visible = true;
-				this.vectorVO.scale = segment.p1.screen.scale;
-				this.vectorVO.destX = segment.p1.screen.x + (this.vectorVO.scale * object.offset * this.roadWidth * this.width / 2 );
-				this.vectorVO.destY = segment.p2.screen.y;
-				this.vectorVO.roadWidth = this.roadWidth;
-				this.vectorVO.clipY = segment.clip;
+				if( source )
+				{
+					source.visible = true;
+					this.vectorVO.scale = segment.p1.screen.scale;
+					this.vectorVO.destX = segment.p1.screen.x + (this.vectorVO.scale * object.offset * this.roadWidth * this.width / 2 );
+					this.vectorVO.destY = segment.p2.screen.y;
+					this.vectorVO.roadWidth = this.roadWidth;
+					this.vectorVO.clipY = segment.clip;
 
-				Draw.sprite( object, this.vectorVO, object.offset, -1 );
+					Draw.sprite( object, this.vectorVO, object.offset, -1 );
+				}
 			}
 		}
 	};
@@ -343,14 +366,6 @@
 
 
 
-/**
- * Road
- *
- * @class Road
- * @constructor
- *
- */
-
 (function(window){
 
 	window.Road = Road;
@@ -359,25 +374,25 @@
 	prototype.constructor = Road;
 
 
+	/**
+	 * Road
+	 *
+	 * @class Road
+	 * @constructor
+	 *
+	 */
 	function Road(){}
   	
   	Road.HILL =	  { NONE: 0, LOW:    10, MEDIUM:  20, HIGH:   30 },
 	Road.LENGTH = { NONE: 0, SHORT:  25, MEDIUM:  50, LONG:  100 }; // num segments
 	Road.CURVE =  { NONE: 0, EASY:    2, MEDIUM:   4, HARD:    6 };
 
-	Road.SPRITE_SCALE = .5;
+	Road.SPRITE_SCALE = 1;
 
 }(window));
 
 
 
-/**
- * Colors
- *
- * @class Road
- * @constructor
- *
- */
 
 (function(window){
 
@@ -386,11 +401,87 @@
 	var prototype = Colors.prototype = Object.create( Object.prototype );
 	prototype.constructor = Colors;
 
+	/**
+	 * Colors
+	 *
+	 * @class Road
+	 * @constructor
+	 *
+	 */
 	function Colors(){}
 
 	Colors.to = function(string)
 	{
 		return parseInt( string, 16 );
+	};
+
+	Colors.hex = function(c)
+	{
+		var hex = c.toString( 16 );
+		return hex.length == 1 ? "0" + hex : hex;
+	};
+
+	Colors.rgb = function(r, g, b)
+	{
+    	return Colors.to( Colors.hex(r) + Colors.hex(g) + Colors.hex(b) );
+	};
+
+	Colors.hsb = function(h, s, l) 
+	{
+	    var r, g, b;
+
+	    if(s == 0)
+	    {
+	        r = g = b = l; // achromatic
+	    }
+	    else
+	    {
+	        var hue2rgb = function hue2rgb(p, q, t)
+	        {
+	            if(t < 0) t += 1;
+	            if(t > 1) t -= 1;
+	            if(t < 1/6) return p + (q - p) * 6 * t;
+	            if(t < 1/2) return q;
+	            if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+	            return p;
+	        }
+
+	        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+	        var p = 2 * l - q;
+
+	        r = hue2rgb(p, q, h + 1/3);
+	        g = hue2rgb(p, q, h);
+	        b = hue2rgb(p, q, h - 1/3);
+	    }
+
+	    return Colors.rgb( Math.round( r * 255 ), Math.round( g * 255 ), Math.round( b * 255 ) );
+	}
+
+	Colors.rgbToHSL = function(r, g, b)
+	{
+		r /= 255, g /= 255, b /= 255;
+		var max = Math.max(r, g, b), min = Math.min(r, g, b);
+		var h, s, l = (max + min) / 2;
+
+		if(max == min){
+			h = s = 0; // achromatic
+		}
+		else
+		{
+			var d = max - min;
+			s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+			
+			switch(max)
+			{
+				case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+				case g: h = (b - r) / d + 2; break;
+				case b: h = (r - g) / d + 4; break;
+			}
+
+			h /= 6;
+		}
+
+		return [h, s, l];
 	};
 
 	Colors.SKY = Colors.to( '72D7EE');

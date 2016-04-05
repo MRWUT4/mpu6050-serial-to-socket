@@ -52,76 +52,61 @@
 		this.name = this.proxy.name;
 		this.container = this.graphics.getChildByName( this.name.container );
 		this.player = this.graphics.getChildByName( this.name.player );
-		this.tree = this.graphics.getChildByName( this.name.tree );
-		this.tree.parent.removeChild( this.tree );
 	};
 
 
 	/** Init RoadRenderer object. */
 	prototype.initRoadRenderer = function()
 	{
-		Draw.loop = 
-		[
-			Draw.background,
-			Draw.road,
-			Draw.rumble,
-			Draw.lanes,
-			Draw.fog
-		];
-
-		Road.SPRITE_SCALE = 1; 
-
-		Colors.LIGHT.rumble = Colors.to( 'D9A300');
-		Colors.DARK.rumble = Colors.to( 'D9A300');
-
-
 		this.roadRenderer = new RoadRenderer(
 		{
 			width: this.canvas.width,
 			height: this.canvas.height,
 			container: this.container,
+			fieldOfView: 80,
 			player: { source:this.player },
+			// playerZ: 20,
+			// speed: this.baseSpeed,
 			drawDistance: 200,
-			playerLimit: .7,
+			decel: -5000,
+			cameraHeight: 600,
+			playerLimit: .9,
 			lanes: 2,
-			rumbleLength: 2,
+			// accel: 4000,
+			// speed: 0,
+			// maxSpeed: 4000,
+			// segmentLength: 400
 		});
+
+		this.roadRenderer.on( Event.HIT, this.roadRendererHitHandler, this );
+
+		this.roadRenderer.input.up = true;
 
 		// this.roadRenderer.input.up = true;
 
 
-		this.trackFactory = new TrackFactory( this.roadRenderer );
-
-		this.trackFactory.addLowRollingHills( 0, Road.HILL.LOW );
-		this.trackFactory.addLowRollingHills( 0, Road.HILL.LOW );
-		this.trackFactory.addSCurves( Road.CURVE.EASY, Road.HILL.LOW );
-		this.trackFactory.addStraight();
-		this.trackFactory.addLowRollingHills( 0, Road.HILL.LOW );
-
-		for(var i = 0; i < 800; ++i)
-		{
-			if( i % 2 == 0 )
-			{
-			    this.roadRenderer.addSprite( i * 10, this.getClone( this.tree ), null, Calculator.getRandomFloatBetweenAandB( -.8, -1.6 ) );	
-			    this.roadRenderer.addSprite( i * 10, this.getClone( this.tree ), null, Calculator.getRandomFloatBetweenAandB(  .8,  1.6 ) );
-			}
-		}
-
-		this.roadRenderer.update();
+		// this.roadRenderer.update();
 
 		// this.roadRenderer.addSprite( 60, this.tree, -2 );
 		// this.roadRenderer.segments.reverse();
 	};
 
-	prototype.getClone = function(displayObject)
-	{
-		var clone = displayObject.clone( true );
-		clone.id = displayObject.id;
-		clone.name = displayObject.name;
-		clone.visible = false;
-		this.container.addChildAt( clone, 1 );
 
-		return clone;
+	/** Event handler functions. */
+	prototype.roadRendererHitHandler = function(event)
+	{	
+		var object = event.object;
+
+		switch( object.source.id )
+		{
+			// case t.id.axe:
+			// 	this.axeHitHandler( object );
+			// 	break;
+
+			// case t.id.goal:
+			// 	this.goalHitHandler( object );
+			// 	break;
+		}
 	};
 
 

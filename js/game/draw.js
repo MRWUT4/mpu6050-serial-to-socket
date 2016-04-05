@@ -144,7 +144,9 @@
 	Draw.sprite = function(object, v, offsetX, offsetY, useClip, scale) 
 	{
 		useClip = useClip !== undefined ? useClip : true;
-		scale = scale !== undefined ? scale : Road.SPRITE_SCALE;
+		scale = scale !== undefined ? scale : object.scale !== undefined ? object.scale : Road.SPRITE_SCALE;
+
+		// console.log( object.scale );
 
 		var sprite = object.source;
 		var parent = object.parent;

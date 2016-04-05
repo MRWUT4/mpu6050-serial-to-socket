@@ -20,9 +20,10 @@
 			new FluidModule( this.shared ),
 			new ButtonModule( this.shared ),
 			new GameplayModule( this.shared ),
+			new TrackFactoryModule( this.shared ),
 
-			new SocketGyroControlModule( this.shared ),
-			new RoadRendererGyroControlModule( this.shared )
+			// new SocketGyroControlModule( this.shared ),
+			// new RoadRendererGyroControlModule( this.shared )
 		];	
 	};
 
