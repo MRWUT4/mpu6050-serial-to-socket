@@ -9,7 +9,12 @@
 	function GameplayModule(setup)
 	{
 		IModule.call( this );	
-		this.setup = setup;
+		
+		Assist.setupScopeVariables( this, setup, 
+		{
+			duration: .2,
+			setup: setup,
+		});
 	}
 
 
@@ -34,6 +39,7 @@
 
 	prototype.update = function()
 	{
+		this.doTween.update();
 		this.input.update();
 		this.roadRenderer.update();	
 	};
@@ -46,6 +52,8 @@
 	/** Variables. */
 	prototype.initVariables = function()
 	{
+		this.doTween = new DoTween();
+
 		this.canvas = this.setup.canvas;
 		this.proxy = this.setup.proxy;
 		this.graphics = this.setup.graphics;
@@ -64,31 +72,26 @@
 			height: this.canvas.height,
 			container: this.container,
 			fieldOfView: 80,
+			// playerZ: 0,
 			player: { source:this.player },
-			// playerZ: 20,
 			// speed: this.baseSpeed,
 			drawDistance: 200,
 			decel: -5000,
-			cameraHeight: 600,
-			playerLimit: .9,
+			cameraHeight: 1500 * 2,
+			playerLimit: 1.3,
 			lanes: 2,
-			// accel: 4000,
+			position: 71300,
+			roadWidth: 4000,
+			centrifugal: .1,
+			accel: 4000,
 			// speed: 0,
-			// maxSpeed: 4000,
-			// segmentLength: 400
+			maxSpeed: 40000,
+			segmentLength: 800
 		});
 
 		this.roadRenderer.on( Event.HIT, this.roadRendererHitHandler, this );
 
 		this.roadRenderer.input.up = true;
-
-		// this.roadRenderer.input.up = true;
-
-
-		// this.roadRenderer.update();
-
-		// this.roadRenderer.addSprite( 60, this.tree, -2 );
-		// this.roadRenderer.segments.reverse();
 	};
 
 
@@ -99,6 +102,9 @@
 
 		switch( object.source.id )
 		{
+			case "gem":
+				this.tweenRemoveItem( object.source );
+				break;
 			// case t.id.axe:
 			// 	this.axeHitHandler( object );
 			// 	break;
@@ -107,6 +113,19 @@
 			// 	this.goalHitHandler( object );
 			// 	break;
 		}
+	};
+
+	prototype.tweenRemoveItem = function(object)
+	{
+		console.log( "HIT");
+		var y = object.y - 100;
+
+		var tween = this.doTween.to( object, this.duration, { alpha:0, y:y, ease:Back.easeIn } );
+		
+		tween.on( Event.COMPLETE, function(event)
+		{
+			console.log( event );
+		})
 	};
 
 

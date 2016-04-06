@@ -89,18 +89,16 @@
 			container: this.container
 		});
 
-		this.trackFactory.addStraight();
-		this.trackFactory.addLowRollingHills( 0, Road.HILL.LOW );
-		this.trackFactory.addLowRollingHills( 0, Road.HILL.LOW );
-
-		this.trackFactory.addLeftCurve( Road.CURVE.EASY, Road.HILL.LOW );
-		this.trackFactory.addRightCurve( Road.CURVE.EASY, Road.HILL.LOW );
-		// this.trackFactory.addSCurves( Road.CURVE.EASY, Road.HILL.LOW );
-		this.trackFactory.addStraight();
-		this.trackFactory.addLowRollingHills( 0, Road.HILL.LOW );
-		this.trackFactory.addLowRollingHills( 0, Road.HILL.LOW );
-		this.trackFactory.addStraight();
-
+		this.trackFactory.addStraight(  80 );
+		this.trackFactory.addStraight(  -20 );
+		this.trackFactory.addLeftCurve(  null, -20 );
+		this.trackFactory.addRightCurve( null, -20 );
+		this.trackFactory.addStraight(  0 );
+		this.trackFactory.addLeftCurve(  null,   0 );
+		this.trackFactory.addRightCurve( null,  10 );
+		this.trackFactory.addLeftCurve(  null, -10 );
+		this.trackFactory.addStraight(  -20 );
+		this.trackFactory.addStraight(  0 );
 	};
 
 	prototype.initSprites = function()
@@ -123,13 +121,24 @@
 			// if( n % this.goalDistance == this.goalDistance - 33 )
 			// 	this.trackFactory.addSprite( n, "end", .005, .24 );
 
-			if( n % 20 == 0 )
+			if( n % 30 == 0 )
 			{
-				this.trackFactory.addSprite( n, "tree", 1, 1 );
-				this.trackFactory.addSprite( n, "tree", -1, 1 );
+				this.trackFactory.addSprite( n, "tree", this.abFloat(  1,  2 ), 2 );
+				this.trackFactory.addSprite( n, "tree", this.abFloat( -1, -2 ), 2 );
+			}
+
+			if( n > 200 && n % 50 == 0 )
+			{
+				var position = Math.sin( n * .01 ) * .8;
+				this.trackFactory.addSprite( n, "gem", position, .2 );
 			}
 
 		}.bind( this ) );
+	};
+
+	prototype.abFloat = function(a, b)
+	{
+		return Calculator.getRandomFloatBetweenAandB( a, b );
 	};
 
 	// prototype.initTrackHitColors = function()

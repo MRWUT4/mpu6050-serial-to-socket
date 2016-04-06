@@ -208,7 +208,7 @@
 		var player = this.player.source;
 		var playerWidth = player.width;
 
-		for(var i = 0 ; i < this.playerSegment.sprites.length ; i++) 
+		for(var i = 0 ; i < this.playerSegment.sprites.length; i++) 
 		{
 			var object = this.playerSegment.sprites[ i ]
 			var sprite = object.source;

@@ -32,10 +32,13 @@
 	 * Vector functions.
 	 */
 
-    prototype.addStraight = function(num) 
+	/** addRoad Format: ( enter, hold, leave, curve, y ) */
+    prototype.addStraight = function(height) 
     {
-		num = num || Road.LENGTH.MEDIUM;
-		this.renderer.addRoad( num, num, num, 0 );
+		var num = num || Road.LENGTH.MEDIUM;
+		height = height || Road.HILL.NONE;
+
+		this.renderer.addRoad( num, num, num, 0, height );
     }
 
 	prototype.addSCurve = function(curve, height) 
@@ -52,7 +55,7 @@
 	prototype.addLeftCurve = function(curve, height) 
 	{
 		curve = curve || Road.CURVE.EASY;
-		height = height || Road.HILL.HIGH;
+		height = height || Road.HILL.NONE;
 		
 		this.renderer.addRoad( Road.LENGTH.MEDIUM, Road.LENGTH.MEDIUM, Road.LENGTH.MEDIUM, -curve, height );
 	};
@@ -60,7 +63,7 @@
 	prototype.addRightCurve = function(curve, height) 
 	{
 		curve = curve || Road.CURVE.EASY;
-		height = height || Road.HILL.HIGH;
+		height = height || Road.HILL.NONE;
 		
 		this.renderer.addRoad( Road.LENGTH.MEDIUM, Road.LENGTH.MEDIUM, Road.LENGTH.MEDIUM, curve, height );
 	};
