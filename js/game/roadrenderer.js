@@ -344,7 +344,8 @@
 		this.vectorVO.scale = this.cameraDepth / this.playerZ; 
 		this.vectorVO.destX = this.width / 2; 
 		this.vectorVO.destY = ( this.height / 2 ) - ( this.cameraDepth / this.playerZ * Util.interpolate( this.playerSegment.p1.camera.y, this.playerSegment.p2.camera.y, this.playerPercent) * this.height / 2 );
-		this.vectorVO.steer = this.speed * ( this.input.left ? -1 : this.input.right ? 1 : 0 );
+		// this.vectorVO.steer = this.speed * ( this.input.left ? -1 : this.input.right ? 1 : 0 );
+		this.vectorVO.steer = Math.abs( this.direction ) < .2 ? 0 : -this.direction;
 		this.vectorVO.updown = this.playerSegment.p2.world.y - this.playerSegment.p1.world.y;
 
 		Draw.player( this.player, this.input, this.vectorVO );

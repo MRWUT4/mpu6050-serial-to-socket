@@ -16,14 +16,19 @@
 	{
 		this.list = 
 		[
+			// generic
 			new GraphicsModule( this.shared, this.id ),
 			new FluidModule( this.shared ),
 			new ButtonModule( this.shared ),
+
+			// gameplay 
 			new GameplayModule( this.shared ),
 			new TrackFactoryModule( this.shared ),
 
-			// new SocketGyroControlModule( this.shared ),
-			// new RoadRendererGyroControlModule( this.shared )
+			// audio
+			new JukeboxModule( this.shared ),
+			new SocketGyroControlModule( this.shared ),
+			new RoadRendererGyroControlModule( this.shared )
 		];	
 	};
 

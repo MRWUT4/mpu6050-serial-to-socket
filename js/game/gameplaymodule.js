@@ -12,7 +12,12 @@
 		
 		Assist.setupScopeVariables( this, setup, 
 		{
-			duration: .2,
+			names:
+			{
+				gem: "gem",
+				coin: "coin"
+			},
+			duration: .3,
 			setup: setup,
 		});
 	}
@@ -54,6 +59,7 @@
 	{
 		this.doTween = new DoTween();
 
+		this.messenger = this.setup.messenger;
 		this.canvas = this.setup.canvas;
 		this.proxy = this.setup.proxy;
 		this.graphics = this.setup.graphics;
@@ -80,7 +86,7 @@
 			cameraHeight: 1500 * 2,
 			playerLimit: 1.3,
 			lanes: 2,
-			position: 71300,
+			position: 131300,
 			roadWidth: 4000,
 			centrifugal: .1,
 			accel: 4000,
@@ -102,8 +108,9 @@
 
 		switch( object.source.id )
 		{
-			case "gem":
-				this.tweenRemoveItem( object.source );
+			case this.names.gem:
+				this.tweenRemoveItem( object );
+				this.messenger.send( new AudioEvent( AudioEvent.PLAY, this.names.coin ) );
 				break;
 			// case t.id.axe:
 			// 	this.axeHitHandler( object );
@@ -117,14 +124,18 @@
 
 	prototype.tweenRemoveItem = function(object)
 	{
-		console.log( "HIT");
-		var y = object.y - 100;
+		// console.log( "HIT");
+		var source = object.source;
+		var y = source.y - 100;
 
-		var tween = this.doTween.to( object, this.duration, { alpha:0, y:y, ease:Back.easeIn } );
+		object.source = null;
+
+		var tween = this.doTween.to( source, this.duration, { alpha:0, y:y, ease:Back.easeOut } );
 		
 		tween.on( Event.COMPLETE, function(event)
 		{
-			console.log( event );
+			var displayObject = event.target.object;
+			displayObject.parent.removeChild( displayObject );
 		})
 	};
 

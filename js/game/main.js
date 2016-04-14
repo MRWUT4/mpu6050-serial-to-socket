@@ -15,7 +15,7 @@
 			forceURLImage: true,
 			settings: Settings,
 			renderOnBlur: false,
-			// urlAudio: Settings.URL_JSON_AUDIO,
+			urlAudio: Settings.URL_JSON_AUDIO,
 			urlContent: Settings.URL_JSON_CONTENT,
 			// urlPreloader: Settings.URL_JSON_PRELOADER,
 			// preloaderState: Settings.ID_STATE_PRELOADER,
@@ -25,7 +25,7 @@
 			// ],
 			manifest:
 			[
-				// Settings.URL_JSON_AUDIO,
+				Settings.URL_JSON_AUDIO,
 				Settings.URL_JSON_CONTENT
 			]
 		});

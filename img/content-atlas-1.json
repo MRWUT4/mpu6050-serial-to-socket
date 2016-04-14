@@ -1,0 +1,19 @@
+﻿{"frames": {
+
+"tree0000":
+{
+	"frame": {"x":0,"y":0,"w":198,"h":340},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":198,"h":340},
+	"sourceSize": {"w":198,"h":340}
+}},
+"meta": {
+	"app": "Adobe Animate",
+	"version": "15.1.0.210",
+	"image": "content-atlas-1.png",
+	"format": "RGBA8888",
+	"size": {"w":256,"h":512},
+	"scale": "1"
+}
+}
