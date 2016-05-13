@@ -54,7 +54,8 @@ io.on('connection', function (socket)
 var serialport = require('serialport');
 var SerialPort = serialport.SerialPort;
 
-var serial = new SerialPort( '/dev/cu.usbmodem641', 
+/* Arduino App -> Werkzeuge -> Port */
+var serial = new SerialPort( '/dev/cu.usbmodemFA141', 
 {
 	baudrate: 9600,
 	parser: serialport.parsers.readline( '\n' )
